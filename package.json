@@ -1,0 +1,33 @@
+{
+  "name": "chess-openings-trainer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "copy:engine": "node scripts/copy-engine.mjs",
+    "postinstall": "node scripts/copy-engine.mjs",
+    "validate:openings": "tsx scripts/validate-openings.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "chess.js": "^1.4.0",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-chessboard": "^5.10.0",
+    "react-dom": "^19.2.7",
+    "stockfish": "^18.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.1",
+    "@types/node": "^26.0.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.3.1",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}

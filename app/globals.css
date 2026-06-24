@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: #ffffff;
+}
+
+/* Keep the page from ever scrolling sideways on small screens. */
+body {
+  overflow-x: hidden;
+}

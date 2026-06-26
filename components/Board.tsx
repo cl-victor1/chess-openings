@@ -74,7 +74,11 @@ export default function Board({ position, boardOrientation, onMove, legalMovesFo
         animationDurationInMs: 200,
         darkSquareStyle: { backgroundColor: "#b58863" },
         lightSquareStyle: { backgroundColor: "#f0d9b5" },
-        boardStyle: { borderRadius: 4, boxShadow: "0 1px 3px rgba(0,0,0,0.2)" },
+        // Keep the board perfectly square. The library's grid is width:100% height:100%,
+        // so when a flex/grid parent stretches it taller than its natural size the rows
+        // spread apart and leave white horizontal gaps. Deriving height from width via
+        // aspect-ratio pins it to a clean 8×8 with no inter-rank gaps.
+        boardStyle: { aspectRatio: "1 / 1", height: "auto", borderRadius: 4, boxShadow: "0 1px 3px rgba(0,0,0,0.2)" },
         dropSquareStyle: { boxShadow: "inset 0 0 0 3px rgba(255,213,79,0.8)" },
       }}
     />

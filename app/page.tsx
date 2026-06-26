@@ -150,7 +150,7 @@ export default function HomePage() {
         </aside>
 
         {/* Center: board */}
-        <section className="mx-auto w-full max-w-[560px]">
+        <section className="mx-auto w-full max-w-[560px] self-start">
           <Board
             position={t.fen}
             boardOrientation={t.orientation}

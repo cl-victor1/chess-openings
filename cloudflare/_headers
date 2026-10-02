@@ -1,0 +1,6 @@
+# Copied into out/ by `pnpm cf:build` (Workers Static Assets reads out/_headers).
+# Not in public/, so Vercel never serves this file.
+# Next's hashed build output never changes under the same URL; Vercel serves it
+# with the same immutable header.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

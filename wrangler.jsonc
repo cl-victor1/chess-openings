@@ -1,0 +1,42 @@
+/**
+ * Cloudflare Workers deployment of the static export (`next build` -> ./out).
+ * Vercel never reads this file; Vercel keeps building the same app on its own.
+ *
+ * The app is a pure static export (`output: "export"` in next.config.ts): no
+ * server routes, no middleware, no image optimization. So this Worker is
+ * assets-only: no `main` script, no OpenNext adapter, no server bundle (and
+ * therefore no 128 MB isolate budget or ASCII rewrite to worry about).
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "chess-openings",
+  "account_id": "df09a764c02c8f903af0a0d02cc2aab7",
+  "compatibility_date": "2026-09-01",
+
+  /* Hostnames stay out of this file on purpose. chess-mate.ai and
+     www.chess-mate.ai are routed to this Worker by zone routes created at
+     cutover through the Cloudflare API; a hostname listed here would be
+     re-asserted (or torn down) by every deploy. The www -> apex 301 and the
+     http -> https 308 are zone Redirect Rules, not Worker code.
+     No workers.dev route and no preview URLs: they would publish a second,
+     indexable copy of the site outside the zone's redirect rules and HSTS. */
+  "workers_dev": false,
+  "preview_urls": false,
+
+  /* Runtime variables, if any are ever added, live on the Worker as plain
+     text and survive deploys. The app needs none today. */
+  "keep_vars": true,
+
+  "assets": {
+    "directory": "./out",
+    /* Next writes out/404.html; unknown paths get it with status 404, like
+       Vercel does for a static export. */
+    "not_found_handling": "404-page"
+  },
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": { "enabled": true, "invocation_logs": true }
+  }
+}

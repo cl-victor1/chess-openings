@@ -28,7 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="min-h-screen bg-white text-stone-900 antialiased">
         {children}
-        <Analytics />
+        {/* Vercel Web Analytics only exists on Vercel. VERCEL_ENV is set during
+            Vercel builds and never on the Cloudflare build, so the static export
+            for Workers carries no /_vercel/insights script (it would 404 there).
+            Cloudflare Web Analytics is injected by the zone instead. */}
+        {process.env.VERCEL_ENV ? <Analytics /> : null}
       </body>
     </html>
   );

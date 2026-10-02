@@ -69,3 +69,61 @@ Or from the CLI:
 pnpm dlx vercel        # preview deploy
 pnpm dlx vercel --prod # production deploy
 ```
+
+## Deploy to Cloudflare Workers (production)
+
+Production (`chess-mate.ai`) is served by the Cloudflare Worker `chess-openings` on the
+account `df09a764c02c8f903af0a0d02cc2aab7`. The Vercel project stays connected to this
+repository as the rollback target; nothing in this section changes the Vercel build.
+
+The Worker is **assets-only**: `wrangler.jsonc` has no `main` script and serves `./out`
+(the static export) through Workers Static Assets. No OpenNext adapter is needed,
+because the app has no server routes, middleware or image optimization.
+
+```bash
+pnpm cf:build     # next build + copy cloudflare/_headers into out/
+pnpm cf:preview   # wrangler dev on http://localhost:8787, serves ./out
+pnpm cf:deploy    # wrangler deploy (needs CLOUDFLARE_API_TOKEN)
+```
+
+Build rules:
+
+- Build in a directory without `.env*` files. `next build` inlines every `NEXT_PUBLIC_*`
+  value into the static HTML and JavaScript. Use a clean copy of the repository (for
+  example `rsync --exclude '.env*' --exclude node_modules`) with the production build
+  variables exported in the shell. The app needs no environment variables today.
+- Leave `VERCEL_ENV` unset. `app/layout.tsx` renders `<Analytics />` (Vercel Web
+  Analytics) only when `VERCEL_ENV` is set at build time, so the Cloudflare build carries
+  no `/_vercel/insights` script.
+- `cloudflare/_headers` gives `/_next/static/*` an immutable Cache-Control. It lives
+  outside `public/` so Vercel never serves it as a file.
+- The largest asset is the Stockfish WebAssembly file (about 7.3 MB), under the 25 MiB
+  limit for one static asset.
+
+Configuration outside git (set through the Cloudflare application programming interface
+at cutover on 2026-10-02):
+
+- Zone routes `chess-mate.ai/*` and `www.chess-mate.ai/*` point at the Worker. Hostnames
+  are not in `wrangler.jsonc`, so a deploy never changes routes.
+- DNS records `chess-mate.ai` (A `216.150.1.1`) and `www` (CNAME
+  `a2e6ec2730959c1c.vercel-dns-016.com`) are proxied. Their content still names the
+  Vercel targets, which makes rollback a single toggle.
+- Redirect Rules (dynamic redirect phase): http to https with 308 for both hostnames,
+  then `www` to the apex with 301. Both keep path and query, as Vercel did.
+- Zone settings: SSL mode Full, HTTP Strict Transport Security max-age 63072000 without
+  includeSubDomains or preload (the header Vercel sent), Always Use HTTPS off (the
+  Redirect Rule does it with 308), Email Obfuscation off, Automatic HTTPS Rewrites off,
+  Browser Cache TTL "respect existing headers", HTTP/3 off.
+- Cloudflare Web Analytics site for `chess-mate.ai` (site tag
+  `b0a4c212e8f140b2928a2f108bbd71dc`) with automatic injection on. The code carries no
+  beacon.
+- `workers_dev` and `preview_urls` are off, so no public `*.workers.dev` copy exists.
+
+Rollback to Vercel:
+
+1. Delete the two Worker routes on the `chess-mate.ai` zone.
+2. Set the `chess-mate.ai` and `www` DNS records to DNS only (proxied off).
+3. Optionally delete the two Redirect Rules; Vercel does the same redirects itself.
+
+Vercel answered `402 DEPLOYMENT_DISABLED` for every request before the cutover, so a
+rollback only serves the site again once the Vercel account is back in good standing.

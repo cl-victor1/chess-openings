@@ -10,7 +10,10 @@
     "copy:engine": "node scripts/copy-engine.mjs",
     "postinstall": "node scripts/copy-engine.mjs",
     "validate:openings": "tsx scripts/validate-openings.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cf:build": "next build && cp cloudflare/_headers out/_headers",
+    "cf:preview": "wrangler dev --port 8787",
+    "cf:deploy": "wrangler deploy"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
@@ -29,6 +32,7 @@
     "tailwindcss": "^4.3.1",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "wrangler": "4.141.0"
   }
 }

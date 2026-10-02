@@ -31,3 +31,6 @@ yarn-error.log*
 
 # generated engine assets (copied from node_modules on install)
 /public/engine/
+
+# wrangler local state
+.wrangler/

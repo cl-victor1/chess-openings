@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 
-// Set NEXT_PUBLIC_SITE_URL in Vercel to your deployed domain for accurate URLs.
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://chess-openings-trainer.vercel.app";
+// Canonical production host. NEXT_PUBLIC_SITE_URL overrides it at build time
+// (for example for a staging copy).
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://chess-mate.ai";
 
 export const dynamic = "force-static";
 

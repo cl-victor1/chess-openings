@@ -60,7 +60,8 @@ functions.
 2. In Vercel, **New Project → Import** the repo. Framework preset: **Next.js** (auto-detected).
    Build command `next build` and install command `pnpm install` are picked up automatically;
    the engine is copied during install via `postinstall`.
-3. (Optional) Set `NEXT_PUBLIC_SITE_URL` to your domain so `sitemap.xml` uses the real URL.
+3. (Optional) Set `NEXT_PUBLIC_SITE_URL` to override the canonical host in `sitemap.xml` and
+   `robots.txt` (default `https://chess-mate.ai`).
 4. Deploy. That's it — everything else runs client-side.
 
 Or from the CLI:
@@ -113,10 +114,11 @@ at cutover on 2026-10-02):
 - Zone settings: SSL mode Full, HTTP Strict Transport Security max-age 63072000 without
   includeSubDomains or preload (the header Vercel sent), Always Use HTTPS off (the
   Redirect Rule does it with 308), Email Obfuscation off, Automatic HTTPS Rewrites off,
-  Browser Cache TTL "respect existing headers", HTTP/3 off.
+  Browser Cache TTL "respect existing headers", HTTP/3 off, minimum TLS 1.2 (was 1.0).
 - Cloudflare Web Analytics site for `chess-mate.ai` (site tag
   `b0a4c212e8f140b2928a2f108bbd71dc`) with automatic injection on. The code carries no
-  beacon.
+  beacon. Cloudflare injects it only for browser User-Agents, so check with
+  `curl -A 'Mozilla/5.0 Chrome/130' https://chess-mate.ai/ | grep cloudflareinsights`.
 - `workers_dev` and `preview_urls` are off, so no public `*.workers.dev` copy exists.
 
 Rollback to Vercel:

@@ -7,7 +7,9 @@ export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/" },
+    // Static export with a single page: nothing private to hide. /cdn-cgi/ is
+    // Cloudflare's zone-level endpoint (email decoding, challenges, beacons).
+    rules: { userAgent: "*", allow: "/", disallow: "/cdn-cgi/" },
     sitemap: `${BASE_URL}/sitemap.xml`,
   };
 }

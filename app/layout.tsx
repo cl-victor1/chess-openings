@@ -2,7 +2,14 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
+// Same canonical host as app/sitemap.ts and app/robots.ts.
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://chess-mate.ai";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
+  // The site is a single page, so "/" resolves against metadataBase to the
+  // home page's own absolute URL: a self canonical.
+  alternates: { canonical: "/" },
   title: "Chess Openings Trainer — Practice 50 Classic Openings",
   description:
     "Practice the 50 most classic chess openings against their book lines, then play on against Stockfish — all running in your browser. Save your games as PGN. No login required.",
@@ -20,6 +27,7 @@ export const metadata: Metadata = {
     title: "Chess Openings Trainer",
     description: "Practice 50 classic chess openings with book lines and in-browser Stockfish.",
     type: "website",
+    url: "/",
   },
 };
 
